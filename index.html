@@ -20,9 +20,17 @@
         }
         .catalogo {
             padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        #pdf-container {
+            width: 90%;
+            max-width: 800px;
+            overflow: auto;
         }
         #pdf-render {
-            margin-top: 20px;
+            width: 100%;
+            height: auto;
             border: 1px solid #ddd;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
@@ -31,11 +39,15 @@
 <body>
     <header>D'Cavallier - Catálogo de Repuestos</header>
     <div class="catalogo">
-        <canvas id="pdf-render"></canvas>
+        <div id="pdf-container">
+            <canvas id="pdf-render"></canvas>
+        </div>
     </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+        
         const url = 'catalogo.pdf';
 
         const renderPDF = async () => {
@@ -43,7 +55,7 @@
             const pdf = await loadingTask.promise;
             const page = await pdf.getPage(1);
 
-            const scale = 1.5;
+            const scale = window.innerWidth < 600 ? 1 : 1.5;
             const viewport = page.getViewport({ scale });
             const canvas = document.getElementById('pdf-render');
             const context = canvas.getContext('2d');
@@ -59,6 +71,7 @@
             await page.render(renderContext).promise;
         };
 
+        window.addEventListener('resize', renderPDF);
         renderPDF();
     </script>
 </body>
