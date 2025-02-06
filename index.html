@@ -24,20 +24,33 @@
         .container {
             display: flex;
             flex-wrap: wrap;
-            justify-content: center;
+            justify-content: space-between;
             align-items: flex-start;
             padding: 20px;
             max-width: 1200px;
             margin: auto;
         }
-        .section, .catalogo {
-            flex: 1;
-            min-width: 300px;
+        .catalogo {
+            flex: 2;
+            min-width: 600px;
             padding: 20px;
             background: rgba(0, 0, 0, 0.6);
             border-radius: 15px;
             backdrop-filter: blur(10px);
             margin: 10px;
+        }
+        .info-sections {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 300px;
+        }
+        .section {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
         }
         #pdf-container {
             width: 100%;
@@ -85,11 +98,6 @@
     <header>D'Cavalier - Catálogo de Repuestos</header>
     
     <div class="container">
-        <section class="section" id="quienes-somos">
-            <h2>¿Quiénes Somos?</h2>
-            <p>Somos D'Cavalier, especialistas en repuestos y accesorios para bicicletas. Ofrecemos productos de alta calidad para ciclistas de todos los niveles.</p>
-        </section>
-        
         <div class="catalogo">
             <div id="pdf-container">
                 <canvas id="pdf-render"></canvas>
@@ -101,15 +109,22 @@
             </div>
         </div>
         
-        <section class="section" id="ubicacion">
-            <h2>Nuestra Ubicación</h2>
-            <p>Encuéntranos en Santa Tecla en, 5 Calle poniente, Texaco la Skina, a la par de bodegas América, Último "local.</p>
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242.29131729244352!2d-89.29669969595803!3d13.678361156264934!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f632f49fda56585%3A0xa6b63b8f7691fc1c!2sD&#39;%20Cavalier%20Tienda%20de%20accesorios%20y%20repuestos%20de%20freno%20para%20bicicleta!5e0!3m2!1ses-419!2sca!4v1738852396587!5m2!1ses-419!2sca" width="100%" height="300" style="border:0; border-radius: 10px;" allowfullscreen="" loading="lazy"></iframe>
-        </section>
+        <div class="info-sections">
+            <section class="section" id="quienes-somos">
+                <h2>¿Quiénes Somos?</h2>
+                <p>Somos D'Cavalier, especialistas en repuestos y accesorios para bicicletas. Ofrecemos productos de alta calidad para ciclistas de todos los niveles.</p>
+            </section>
+            
+            <section class="section" id="ubicacion">
+                <h2>Nuestra Ubicación</h2>
+                <p>Encuéntranos en el corazón de la ciudad, listos para atenderte con el mejor servicio.</p>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242.29131729244352!2d-89.29669969595803!3d13.678361156264934!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f632f49fda56585%3A0xa6b63b8f7691fc1c!2sD&#39;%20Cavalier%20Tienda%20de%20accesorios%20y%20repuestos%20de%20freno%20para%20bicicleta!5e0!3m2!1ses-419!2sca!4v1738852396587!5m2!1ses-419!2sca" width="100%" height="300" style="border:0; border-radius: 10px;" allowfullscreen="" loading="lazy"></iframe>
+            </section>
+        </div>
     </div>
     
     <footer>
-        &copy; 2025 SKXWorks - Contacto: diego@dcavalier.com
+        &copy; 2025 SKXWorks|Alvaro Calderon - Contacto: diego@dcavalier.com
     </footer>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
@@ -124,30 +139,6 @@
             scale = window.innerWidth < 600 ? 1 : 1.5,
             canvas = document.getElementById('pdf-render'),
             ctx = canvas.getContext('2d');
-
-        const renderPage = num => {
-            pageRendering = true;
-            pdfDoc.getPage(num).then(page => {
-                const viewport = page.getViewport({ scale });
-                canvas.width = viewport.width;
-                canvas.height = viewport.height;
-
-                const renderContext = {
-                    canvasContext: ctx,
-                    viewport: viewport
-                };
-                const renderTask = page.render(renderContext);
-
-                renderTask.promise.then(() => {
-                    pageRendering = false;
-                    if (pageNumPending !== null) {
-                        renderPage(pageNumPending);
-                        pageNumPending = null;
-                    }
-                });
-            });
-            document.getElementById('page-num').textContent = num;
-        };
 
         pdfjsLib.getDocument(url).promise.then(pdf => {
             pdfDoc = pdf;
