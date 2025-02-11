@@ -14,31 +14,47 @@
             text-align: center;
             color: white;
         }
-         header {
+        header {
             background: rgba(51, 51, 51, 0.8);
             color: white;
-            padding: 20px 0;
+            padding: 40px 0;
             font-size: 24px;
             backdrop-filter: blur(10px);
             margin-bottom: 20px;
         }
-        .section {
-            padding: 20px 20px;
-            max-width: 800px;
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 20px;
+            max-width: 1200px;
             margin: auto;
+        }
+        .catalogo {
+            flex: 2;
+            min-width: 600px;
+            padding: 20px;
             background: rgba(0, 0, 0, 0.6);
             border-radius: 15px;
             backdrop-filter: blur(10px);
-            margin-bottom: 20px;
+            margin: 10px;
         }
-        .catalogo {
-            padding: 20px;
+        .info-sections {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            gap: 20px;
+            min-width: 300px;
+        }
+        .section {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
         }
         #pdf-container {
-            width: 90%;
+            width: 100%;
             max-width: 800px;
             overflow: auto;
             background: rgba(255, 255, 255, 0.2);
@@ -82,27 +98,31 @@
 <body>
     <header>D'Cavalier - Catálogo de Repuestos</header>
     
-    <section class="section" id="quienes-somos">
-        <h2>¿Quiénes Somos?</h2>
-        <p>Somos D'Cavalier, especialistas en repuestos y accesorios para bicicletas. Ofrecemos productos de alta calidad para ciclistas de todos los niveles.</p>
-    </section>
-    
-    <div class="catalogo">
-        <div id="pdf-container">
-            <canvas id="pdf-render"></canvas>
+    <div class="container">
+        <div class="catalogo">
+            <div id="pdf-container">
+                <canvas id="pdf-render"></canvas>
+            </div>
+            <div class="controls">
+                <button id="prev-page">Página Anterior</button>
+                <span id="page-num"></span> / <span id="page-count"></span>
+                <button id="next-page">Página Siguiente</button>
+            </div>
         </div>
-        <div class="controls">
-            <button id="prev-page">Página Anterior</button>
-            <span id="page-num"></span> / <span id="page-count"></span>
-            <button id="next-page">Página Siguiente</button>
+        
+        <div class="info-sections">
+            <section class="section" id="quienes-somos">
+                <h2>¿Quiénes Somos?</h2>
+                <p>Somos D'Cavalier, especialistas en repuestos y accesorios para bicicletas. Ofrecemos productos de alta calidad para ciclistas de todos los niveles.</p>
+            </section>
+            
+            <section class="section" id="ubicacion">
+                <h2>Nuestra Ubicación</h2>
+                <p>Encuéntranos en el corazón de la ciudad, listos para atenderte con el mejor servicio.</p>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242.29131729244352!2d-89.29669969595803!3d13.678361156264934!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f632f49fda56585%3A0xa6b63b8f7691fc1c!2sD&#39;%20Cavalier%20Tienda%20de%20accesorios%20y%20repuestos%20de%20freno%20para%20bicicleta!5e0!3m2!1ses-419!2sca!4v1738852396587!5m2!1ses-419!2sca" width="100%" height="300" style="border:0; border-radius: 10px;" allowfullscreen="" loading="lazy"></iframe>
+            </section>
         </div>
     </div>
-    
-    <section class="section" id="ubicacion">
-        <h2>Nuestra Ubicación</h2>
-        <p>Encuéntranos en Santa Tecla, 5 Calle poniente, Texaco la Skina, a la par de bodegas América, Último "local".</p>
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242.29131729244352!2d-89.29669969595803!3d13.678361156264934!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f632f49fda56585%3A0xa6b63b8f7691fc1c!2sD&#39;%20Cavalier%20Tienda%20de%20accesorios%20y%20repuestos%20de%20freno%20para%20bicicleta!5e0!3m2!1ses-419!2sca!4v1738852016474!5m2!1ses-419!2sca" width="100%" height="400" style="border:0; border-radius: 10px;" allowfullscreen="" loading="lazy"></iframe>
-    </section>
     
     <footer>
         &copy; 2025 SKXWorks|Alvaro Calderon - Contacto: diego@dcavalier.com
@@ -120,6 +140,12 @@
             scale = window.innerWidth < 600 ? 1 : 1.5,
             canvas = document.getElementById('pdf-render'),
             ctx = canvas.getContext('2d');
+
+        pdfjsLib.getDocument(url).promise.then(pdf => {
+            pdfDoc = pdf;
+            document.getElementById('page-count').textContent = pdfDoc.numPages;
+            renderPage(pageNum);
+        });
 
         const renderPage = num => {
             pageRendering = true;
@@ -145,7 +171,17 @@
             document.getElementById('page-num').textContent = num;
         };
 
-        pdfjsLib.getDocument(url).promise.then(pdf => {
+        document.getElementById('prev-page').addEventListener('click', () => {
+            if (pageNum <= 1) return;
+            pageNum--;
+            renderPage(pageNum);
+        });
+
+        document.getElementById('next-page').addEventListener('click', () => {
+            if (pageNum >= pdfDoc.numPages) return;
+            pageNum++;
+            renderPage(pageNum);
+        });
             pdfDoc = pdf;
             document.getElementById('page-count').textContent = pdfDoc.numPages;
             renderPage(pageNum);
