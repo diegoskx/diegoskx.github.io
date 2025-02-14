@@ -1,7 +1,7 @@
 /* Estilos Generales */
 body {
     font-family: Arial, sans-serif;
-    background: url('imagenes/fondo1.jpg') no-repeat center center/cover;
+    background: url('../imagenes/fondo1.jpg') no-repeat center center/cover;
     margin: 0;
     padding: 0;
     text-align: center;
@@ -15,6 +15,11 @@ header {
     font-size: 24px;
     backdrop-filter: blur(10px);
     margin-bottom: 20px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
 }
 
 /* Secciones */
