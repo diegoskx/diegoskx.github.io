@@ -96,5 +96,17 @@
             renderPage(pageNum);
         });
     </script>
+    <script>
+  let normalTitle = "D'Cavalier | Repuestos de Bicicletas";
+  let attentionTitle = "¡No olvides revisar nuestras ofertas! 🚴";
+
+  document.addEventListener("visibilitychange", function() {
+    if (document.hidden) {
+      document.title = attentionTitle;
+    } else {
+      document.title = normalTitle;
+    }
+  });
+</script>
 </body>
 </html>
